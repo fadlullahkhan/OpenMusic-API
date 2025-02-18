@@ -54,11 +54,14 @@ export default class AlbumsHandler {
 
     const { id } = request.params;
 
-    await this._service.editAlbumById(id, request.payload);
+    const album = await this._service.editAlbumById(id, request.payload);
 
     return {
       status: 'success',
       message: 'Album berhasil diperbarui',
+      data: {
+        album,
+      }
     };
   }
 
