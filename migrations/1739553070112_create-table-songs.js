@@ -25,8 +25,6 @@ export const up = (pgm) => {
     },
     albumId: {
       type: 'VARCHAR(50)',
-      references: 'albums(id)',
-      onDelete: 'CASCADE',
     },
   });
 };
