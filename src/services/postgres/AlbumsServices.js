@@ -40,7 +40,18 @@ export default class AlbumsServices {
 
   async getAlbumById(id) {
     const query = {
-      text: 'SELECT * FROM albums WHERE id = $1',
+      text: `
+        SELECT 
+          a.id AS album_id, a.name AS album_name, a.year AS album_year, 
+          a.created_at AS album_createdAt, a.updated_at AS album_updatedAt,
+          s.id AS song_id, s.title AS song_title, s.year AS song_year, 
+          s.performer AS song_performer, s.genre AS song_genre, 
+          s.created_at AS song_createdAt, s.updated_at AS song_updatedAt, 
+          s.duration AS song_duration
+        FROM albums a
+        LEFT JOIN songs s ON a.id = s.album_id
+        WHERE a.id = $1;
+      `,
       values: [id],
     };
 
@@ -50,8 +61,28 @@ export default class AlbumsServices {
       throw new NotFoundError('Gagal mendapatkan album. Id tidak ditemukan.');
     }
 
-    return result.rows.map(albumMapDBToModel)[0];
-  }
+    const album = {
+      id: result.rows[0].album_id,
+      name: result.rows[0].album_name,
+      year: result.rows[0].album_year,
+      createdAt: result.rows[0].album_createdAt,
+      updatedAt: result.rows[0].album_updatedAt,
+      songs: result.rows
+        .filter(row => row.song_id) // Hanya tambahkan lagu jika ada
+        .map(row => ({
+          id: row.song_id,
+          title: row.song_title,
+          year: row.song_year,
+          performer: row.song_performer,
+          genre: row.song_genre,
+          createdAt: row.song_createdAt,
+          updatedAt: row.song_updatedAt,
+          duration: row.song_duration,
+        })),
+    };
+
+    return album;
+}
 
   async editAlbumById(id, { name, year }) {
     const now = new Date();
