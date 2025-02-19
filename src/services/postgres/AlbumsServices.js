@@ -33,7 +33,7 @@ export default class AlbumsServices {
   }
 
   async getAlbums() {
-    const result = await this._pool.query('SELECT * FROM albums');
+    const result = await this._pool.query('SELECT id, name, year FROM albums');
 
     return result.rows.map(albumMapDBToModel);
   }
@@ -42,12 +42,9 @@ export default class AlbumsServices {
     const query = {
       text: `
         SELECT 
-          a.id AS album_id, a.name AS album_name, a.year AS album_year, 
-          a.created_at AS album_createdAt, a.updated_at AS album_updatedAt,
-          s.id AS song_id, s.title AS song_title, s.year AS song_year, 
-          s.performer AS song_performer, s.genre AS song_genre, 
-          s.created_at AS song_createdAt, s.updated_at AS song_updatedAt, 
-          s.duration AS song_duration
+          a.id AS album_id, a.name AS album_name, a.year AS album_year,
+          s.id AS song_id, s.title AS song_title, 
+          s.performer AS song_performer
         FROM albums a
         LEFT JOIN songs s ON a.id = s.album_id
         WHERE a.id = $1;
@@ -65,24 +62,17 @@ export default class AlbumsServices {
       id: result.rows[0].album_id,
       name: result.rows[0].album_name,
       year: result.rows[0].album_year,
-      createdAt: result.rows[0].album_createdAt,
-      updatedAt: result.rows[0].album_updatedAt,
       songs: result.rows
-        .filter(row => row.song_id) // Hanya tambahkan lagu jika ada
-        .map(row => ({
+        .filter((row) => row.song_id)
+        .map((row) => ({
           id: row.song_id,
           title: row.song_title,
-          year: row.song_year,
           performer: row.song_performer,
-          genre: row.song_genre,
-          createdAt: row.song_createdAt,
-          updatedAt: row.song_updatedAt,
-          duration: row.song_duration,
         })),
     };
 
     return album;
-}
+  }
 
   async editAlbumById(id, { name, year }) {
     const now = new Date();

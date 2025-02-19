@@ -43,7 +43,7 @@ export default class SongsServices {
   }
 
   async getSongs() {
-    const result = await this._pool.query('SELECT * FROM songs');
+    const result = await this._pool.query('SELECT songs.id, songs.title, songs.performer FROM songs');
 
     return result.rows.map(songMapDBToModel);
   }
