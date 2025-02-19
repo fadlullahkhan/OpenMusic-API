@@ -9,7 +9,7 @@ export default class SongsHandler {
   }
 
   async postSongHandler(request, h) {
-    this._validator.validateSongPayload(request.payload);
+    this._validator.payloadSong(request.payload);
 
     const { title, year, performer, genre, duration, albumId } =
       request.payload;
@@ -34,8 +34,10 @@ export default class SongsHandler {
     return response;
   }
 
-  async getSongsHandler() {
-    const songs = await this._service.getSongs();
+  async getSongsHandler(request) {
+    await this._validator.querySong(request.query);
+    
+    const songs = await this._service.getSongs(request.query);
 
     return {
       status: 'success',
@@ -58,7 +60,7 @@ export default class SongsHandler {
   }
 
   async putSongByIdHandler(request) {
-    this._validator.validateSongPayload(request.payload);
+    this._validator.payloadSong(request.payload);
 
     const { id } = request.params;
 

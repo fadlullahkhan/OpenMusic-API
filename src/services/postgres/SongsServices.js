@@ -42,11 +42,47 @@ export default class SongsServices {
     return result.rows[0].id;
   }
 
-  async getSongs() {
-    const result = await this._pool.query('SELECT songs.id, songs.title, songs.performer FROM songs');
+  // async getSongs({ title = '', performer = '' }) {
+    // const result = await this._pool.query(
+    //   'SELECT songs.id, songs.title, songs.performer FROM songs',
+    // );
 
-    return result.rows.map(songMapDBToModel);
-  }
+    // if (title !== '' || performer !== '') {
+    //   const filterResult = result.rows.filter(
+    //     (song) => song.title === title || song.performer === performer,
+    //   );
+
+    //   return filterResult;
+    // }
+
+    // return result.rows;}
+    
+    async getSongs({ title = '', performer = '' }) {
+    let queryText = 'SELECT id, title, performer FROM songs';
+    const values = [];
+    const conditions = [];
+
+    if (title) {
+        conditions.push(`LOWER(title) LIKE LOWER($${values.length + 1})`);
+        values.push(`%${title}%`);
+    }
+
+    if (performer) {
+        conditions.push(`LOWER(performer) LIKE LOWER($${values.length + 1})`);
+        values.push(`%${performer}%`);
+    }
+
+    if (conditions.length > 0) {
+        queryText += ` WHERE ${conditions.join(' AND ')}`;
+    }
+
+    const result = await this._pool.query({
+        text: queryText,
+        values,
+    });
+
+    return result.rows;
+}
 
   async getSongById(id) {
     const query = {
@@ -69,7 +105,7 @@ export default class SongsServices {
 
     const query = {
       text: 'UPDATE songs SET title = $1, year = $2, performer = $3, genre = $4, updated_at = $5, duration = $6, album_id = $7 WHERE id = $8 RETURNING id',
-      values: [title, year, performer, genre, updatedAt, duration, albumId],
+      values: [title, year, performer, genre, updatedAt, duration, albumId, id],
     };
 
     const result = await this._pool.query(query);
@@ -86,9 +122,9 @@ export default class SongsServices {
     };
 
     const result = await this._pool.query(query);
-    
+
     if (!result.rows.length) {
-      throw new NotFoundError('Gagal menghapus lagu. Id tidak ditemukan')
+      throw new NotFoundError('Gagal menghapus lagu. Id tidak ditemukan');
     }
   }
 }
