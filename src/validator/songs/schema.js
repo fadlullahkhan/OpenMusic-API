@@ -11,5 +11,5 @@ export const PayloadsSchemaSong = Joi.object({
 
 export const QuerySchemaSong = Joi.object({
   title: Joi.string().empty(''),
-  performer: Joi.string().empty('')
-})
+  performer: Joi.string().empty(''),
+});

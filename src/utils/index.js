@@ -16,4 +16,14 @@ export const songMapDBToModel = ({
   updated_at,
   duration,
   album_id,
-}) => ({id,title,year,performer,genre,createdAt: created_at,updatedAt: updated_at,duration,albumId: album_id});
+}) => ({
+  id,
+  title,
+  year,
+  performer,
+  genre,
+  createdAt: created_at,
+  updatedAt: updated_at,
+  duration,
+  albumId: album_id,
+});

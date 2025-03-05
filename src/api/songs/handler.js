@@ -36,7 +36,7 @@ export default class SongsHandler {
 
   async getSongsHandler(request) {
     await this._validator.querySong(request.query);
-    
+
     const songs = await this._service.getSongs(request.query);
 
     return {
