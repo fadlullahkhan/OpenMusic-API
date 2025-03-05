@@ -42,21 +42,6 @@ export default class SongsServices {
     return result.rows[0].id;
   }
 
-  // async getSongs({ title = '', performer = '' }) {
-  // const result = await this._pool.query(
-  //   'SELECT songs.id, songs.title, songs.performer FROM songs',
-  // );
-
-  // if (title !== '' || performer !== '') {
-  //   const filterResult = result.rows.filter(
-  //     (song) => song.title === title || song.performer === performer,
-  //   );
-
-  //   return filterResult;
-  // }
-
-  // return result.rows;}
-
   async getSongs({ title = '', performer = '' }) {
     let queryText = 'SELECT id, title, performer FROM songs';
     const values = [];
