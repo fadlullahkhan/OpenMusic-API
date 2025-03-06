@@ -1,7 +1,8 @@
 import pg from 'pg';
 import { nanoid } from 'nanoid';
 import bcrypt from 'bcryptjs';
-import InvariantError from '../../exceptions/InvariantError';
+import InvariantError from '../../exceptions/InvariantError.js';
+import NotFoundError from '../../exceptions/NotFoundError.js';
 
 const { Pool } = pg;
 
@@ -42,5 +43,20 @@ export default class UsersServices {
         'Gagal menambahkan user. Username sudah digunakan.'
       );
     }
+  }
+
+  async getUserById(userId) {
+    const query = {
+      text: 'SELECT id, username, fullname FROM user WHERE id = $1',
+      values: [userId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError('User tidak ditemukan');
+    }
+
+    return result.rows[0];
   }
 }
