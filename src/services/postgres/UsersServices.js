@@ -1,8 +1,10 @@
 import pg from 'pg';
 import { nanoid } from 'nanoid';
 import bcrypt from 'bcryptjs';
+import time from 'date-and-time';
 import InvariantError from '../../exceptions/InvariantError.js';
 import NotFoundError from '../../exceptions/NotFoundError.js';
+import {userMapDBToModel} from '../../utils/index.js'
 
 const { Pool } = pg;
 
@@ -16,9 +18,11 @@ export default class UsersServices {
 
     const id = `user-${nanoid(18)}`;
     const hashedPassword = await bcrypt.hash(password, 10);
+    const now = new Date();
+    const createdAt = time.format(now, 'ddd, DD MMM YYYY HH:mm:ss');
     const query = {
-      text: 'INSERT INTO users VALUES($1, $2, $3, $4) RETURNING id',
-      values: [id, username, hashedPassword, fullname],
+      text: 'INSERT INTO users VALUES($1, $2, $3, $4, $5) RETURNING id',
+      values: [id, username, hashedPassword, fullname, createdAt],
     };
 
     const result = await this._pool.query(query);
@@ -40,12 +44,12 @@ export default class UsersServices {
 
     if (result.rows.length > 0) {
       throw new InvariantError(
-        'Gagal menambahkan user. Username sudah digunakan.'
+        'Gagal menambahkan user. Username sudah digunakan.',
       );
     }
   }
 
-  async getUserById(userId) {
+  async getUsersById(userId) {
     const query = {
       text: 'SELECT id, username, fullname FROM user WHERE id = $1',
       values: [userId],
@@ -56,7 +60,7 @@ export default class UsersServices {
     if (!result.rows.length) {
       throw new NotFoundError('User tidak ditemukan');
     }
-
-    return result.rows[0];
+    
+    return result.rows[0]
   }
 }

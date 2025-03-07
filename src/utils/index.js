@@ -28,3 +28,11 @@ export const songMapDBToModel = ({
   duration,
   albumId: album_id,
 });
+
+export const userMapDBToModel = ({
+  id,
+  username,
+  password,
+  fullname,
+  created_at,
+}) => ({ id, username, hasedPassword: password, fullname, createdAt: created_at });
