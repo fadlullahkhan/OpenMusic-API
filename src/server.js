@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import Hapi from '@hapi/hapi';
+
 // albums plugin
 import albums from './api/albums/index.js';
 import AlbumsServices from './services/postgres/AlbumsServices.js';
@@ -12,6 +13,11 @@ import SongsValidator from './validator/songs/index.js';
 import users from './api/users/index.js';
 import UsersServices from './services/postgres/UsersServices.js';
 import UsersValidator from './validator/users/index.js';
+// authentications plugin
+import authentications from './api/authentications/index.js';
+import AuthenticationsServices from './services/postgres/AuthenticationsServices.js';
+import TokenManager from './tokenize/TokenManager.js';
+import AuthenticationsValidator from './validator/authentications/index.js';
 
 import ClientError from './exceptions/ClientError.js';
 
@@ -19,6 +25,7 @@ const init = async () => {
   const albumsServices = new AlbumsServices();
   const songsServices = new SongsServices();
   const usersServices = new UsersServices();
+  const authenticationsServices = new AuthenticationsServices();
 
   const server = Hapi.server({
     port: process.env.PORT,
@@ -52,12 +59,22 @@ const init = async () => {
         validator: UsersValidator,
       },
     },
+    {
+      plugin: authentications,
+      options: {
+        authenticationsService: authenticationsServices,
+        usersService: usersServices,
+        tokenManager: TokenManager,
+        validator: AuthenticationsValidator
+      }
+    }
   ]);
 
   server.ext('onPreResponse', (request, h) => {
     const { response } = request;
 
     if (response instanceof ClientError) {
+      
       const newResponse = h.response({
         status: 'fail',
         message: response.message,

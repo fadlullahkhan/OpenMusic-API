@@ -6,7 +6,8 @@
     "start": "node ./src/server.js",
     "start:dev": "nodemon ./src/server.js",
     "lint": "eslint ./",
-    "migrate": "node-pg-migrate"
+    "migrate": "node-pg-migrate",
+    "test:2": "newman run ./postman/submission2/collection.json -e ./postman/submission2/environment.json"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +16,7 @@
   "description": "",
   "dependencies": {
     "@hapi/hapi": "^21.3.12",
+    "@hapi/jwt": "^3.2.0",
     "auto-bind": "^5.0.1",
     "bcryptjs": "^3.0.2",
     "date-and-time": "^3.6.0",
