@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import Hapi from '@hapi/hapi';
+import Jwt from '@hapi/jwt';
 
 // albums plugin
 import albums from './api/albums/index.js';
@@ -39,6 +40,28 @@ const init = async () => {
 
   await server.register([
     {
+      plugin: Jwt,
+    },
+  ]);
+
+  server.auth.strategy('openmusicapp_jwt', 'jwt', {
+    keys: process.env.ACCESS_TOKEN_KEY,
+    verify: {
+      aud: false,
+      iss: false,
+      sub: false,
+      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
+    },
+    validate: (artifacts) => ({
+      isValid: true,
+      credentials: {
+        id: artifacts.decoded.payload.id
+      }
+    }),
+  });
+
+  await server.register([
+    {
       plugin: albums,
       options: {
         service: albumsServices,
@@ -65,16 +88,15 @@ const init = async () => {
         authenticationsService: authenticationsServices,
         usersService: usersServices,
         tokenManager: TokenManager,
-        validator: AuthenticationsValidator
-      }
-    }
+        validator: AuthenticationsValidator,
+      },
+    },
   ]);
 
   server.ext('onPreResponse', (request, h) => {
     const { response } = request;
 
     if (response instanceof ClientError) {
-      
       const newResponse = h.response({
         status: 'fail',
         message: response.message,
