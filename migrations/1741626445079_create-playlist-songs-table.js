@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 export const up = (pgm) => {
-  pgm.createTable('playlist_songs', {
+  pgm.createTable('songlist', {
     id: {
       type: 'VARCHAR(50)',
       primaryKey: true,
@@ -23,5 +23,5 @@ export const up = (pgm) => {
 };
 
 export const down = (pgm) => {
-  pgm.dropTable('playlist_songs');
+  pgm.dropTable('songlist');
 };

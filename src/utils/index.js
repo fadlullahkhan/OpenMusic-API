@@ -29,4 +29,9 @@ export const songMapDBToModel = ({
   albumId: album_id,
 });
 
-export const playlistMapDBToModel = ({id,name,created_at,owner}) => ({id,name,createdAt: created_at, owner})
+export const playlistMapDBToModel = ({ id, name, created_at, owner }) => ({
+  id,
+  name,
+  createdAt: created_at,
+  owner,
+});

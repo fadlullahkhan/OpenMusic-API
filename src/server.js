@@ -23,6 +23,10 @@ import AuthenticationsValidator from './validator/authentications/index.js';
 import playlists from './api/playlists/index.js';
 import PlaylistsServices from './services/postgres/PlaylistsServices.js';
 import PlaylistsValidator from './validator/playlists/index.js';
+// songlist plugin
+import songlist from './api/songlist/index.js';
+import SongListServices from './services/postgres/SongListServices.js';
+import SongListValidator from './validator/songlist/index.js';
 
 import ClientError from './exceptions/ClientError.js';
 
@@ -32,6 +36,7 @@ const init = async () => {
   const usersServices = new UsersServices();
   const authenticationsServices = new AuthenticationsServices();
   const playlistsServices = new PlaylistsServices();
+  const songlistServices = new SongListServices();
 
   const server = Hapi.server({
     port: process.env.PORT,
@@ -100,9 +105,18 @@ const init = async () => {
       plugin: playlists,
       options: {
         service: playlistsServices,
-        validator: PlaylistsValidator
-      }
-    }
+        validator: PlaylistsValidator,
+      },
+    },
+    {
+      plugin: songlist,
+      options: {
+        service: songlistServices,
+        playlistsService: playlistsServices,
+        songsService: songsServices,
+        validator: SongListValidator,
+      },
+    },
   ]);
 
   server.ext('onPreResponse', (request, h) => {

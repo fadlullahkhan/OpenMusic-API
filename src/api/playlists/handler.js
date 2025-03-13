@@ -30,25 +30,6 @@ export default class PlaylistsHandler {
     return response;
   }
 
-  async postSongIntoPlaylistHandler(request, h) {
-    console.log(request.payload);
-    this._validator.validateSonglistPayload(request.payload);
-
-    const { id } = request.params;
-    const { id: credentialId } = request.auth.credentials;
-    const { songId } = request.payload;
-
-    await this._service.verifyPlaylistOwner(id, credentialId);
-    await this._service.addSongIntoPlaylist(id, songId);
-
-    const response = h.response({
-      status: 'success',
-      message: 'Menambahkan lagu ke playlist',
-    });
-    response.code(201);
-    return response;
-  }
-
   async getPlaylistsHandler(request) {
     const { id: credentialId } = request.auth.credentials;
     const playlists = await this._service.getPlaylists(credentialId);
@@ -61,17 +42,26 @@ export default class PlaylistsHandler {
     };
   }
 
-  async getSonglistByIdHandler(request) {
-    return request.params
+  async getPlaylistByIdHandler(request) {
+    const { id } = request.params;
+    const playlist = await this._service.getPlaylistById(id);
+    
+    return {
+      status: 'success',
+      data: {
+        playlist
+      }
+    }
   }
 
   async deletePlaylistByIdHandler(request) {
     const { id } = request.params;
     const { id: credentialId } = request.auth.credentials;
-
+    
     await this._service.verifyPlaylistOwner(id, credentialId);
+    
     await this._service.deletePlaylistById(id);
-
+    
     return {
       status: 'success',
       message: 'Menghapus Playlist',
