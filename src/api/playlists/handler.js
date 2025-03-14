@@ -14,10 +14,7 @@ export default class PlaylistsHandler {
     const { name } = request.payload;
     const { id: credentialId } = request.auth.credentials;
 
-    const playlistId = await this._service.addPlaylist(
-      name,
-      credentialId,
-    );
+    const playlistId = await this._service.addPlaylist(name, credentialId);
 
     const response = h.response({
       status: 'success',
@@ -32,6 +29,7 @@ export default class PlaylistsHandler {
 
   async getPlaylistsHandler(request) {
     const { id: credentialId } = request.auth.credentials;
+
     const playlists = await this._service.getPlaylists(credentialId);
 
     return {
@@ -44,6 +42,10 @@ export default class PlaylistsHandler {
 
   async getPlaylistByIdHandler(request) {
     const { id } = request.params;
+    const { id: credentialId } = request.auth.credentials;
+
+    await this._service.verifyPlaylistOwner(id, credentialId);
+
     const playlist = await this._service.getPlaylistById(id);
 
     return {

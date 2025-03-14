@@ -18,8 +18,8 @@ export default class SongListHandler {
     const { id: credentialId } = request.auth.credentials;
 
     await this._playlistsService.getPlaylistById(playlistId);
-    await this._songsService.getSongById(songId);
     await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
+    await this._songsService.getSongById(songId);
     await this._service.addSongList(playlistId, songId);
 
     const response = h.response({
