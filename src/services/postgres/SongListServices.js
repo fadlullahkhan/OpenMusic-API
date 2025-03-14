@@ -3,7 +3,6 @@ import { nanoid } from 'nanoid';
 import time from 'date-and-time';
 import InvariantError from '../../exceptions/InvariantError.js';
 import NotFoundError from '../../exceptions/NotFoundError.js';
-import AuthorizationError from '../../exceptions/AuthorizationError.js';
 
 const { Pool } = pg;
 
@@ -49,9 +48,9 @@ export default class SongListServices {
     };
 
     const result = await this._pool.query(query);
-    
+
     if (!result.rows.length) {
-      throw new NotFoundError('Gagal menghapus lagu. Id tidak ditemukan')
+      throw new NotFoundError('Gagal menghapus lagu. Id tidak ditemukan');
     }
   }
 }

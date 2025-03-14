@@ -4,7 +4,6 @@ import time from 'date-and-time';
 import InvariantError from '../../exceptions/InvariantError.js';
 import NotFoundError from '../../exceptions/NotFoundError.js';
 import AuthorizationError from '../../exceptions/AuthorizationError.js';
-import { playlistMapDBToModel } from '../../utils/index.js';
 
 const { Pool } = pg;
 
@@ -71,7 +70,7 @@ export default class PlaylistsServices {
       throw new NotFoundError('Gagal menghapus Playlist. Id tidak ditemukan');
     }
   }
-  
+
   async verifyPlaylistOwner(id, owner) {
     const query = {
       text: 'SELECT * FROM playlists WHERE id = $1',

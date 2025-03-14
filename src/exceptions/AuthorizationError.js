@@ -1,4 +1,4 @@
-import ClientError from './ClientError.js'
+import ClientError from './ClientError.js';
 
 export default class AuthorizationError extends ClientError {
   constructor(message) {

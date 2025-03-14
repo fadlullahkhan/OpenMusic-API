@@ -83,7 +83,7 @@ export default class UsersServices {
     if (!match) {
       throw new AuthenticationError('Kredential yang anda berikan salah');
     }
-    
-    return id
+
+    return id;
   }
 }
