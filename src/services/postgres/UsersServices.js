@@ -51,7 +51,7 @@ export default class UsersServices {
 
   async getUsersById(userId) {
     const query = {
-      text: 'SELECT id, username, fullname FROM user WHERE id = $1',
+      text: 'SELECT id, username, fullname FROM users WHERE id = $1',
       values: [userId],
     };
 

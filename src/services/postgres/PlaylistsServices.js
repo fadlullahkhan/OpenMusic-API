@@ -9,8 +9,9 @@ import { playlistMapDBToModel } from '../../utils/index.js';
 const { Pool } = pg;
 
 export default class PlaylistsServices {
-  constructor() {
+  constructor(collaborationService) {
     this._pool = new Pool();
+    this._collaborationService = collaborationService;
   }
 
   async verifyPlaylistOwner(id, owner) {
@@ -32,7 +33,22 @@ export default class PlaylistsServices {
     }
   }
 
-  async addPlaylist({ name, owner }) {
+  async verifyPlaylistAccess(playlistId, userId) {
+    try {
+      await this.verifyPlaylistOwner(playlistId, userId);
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        throw error;
+      }
+      try {
+        await this._collaborationService.verifyCollaboration(playlistId, userId);
+      } catch (error) {
+        throw error;
+      }
+    }
+  }
+
+  async addPlaylist(name, owner) {
     const id = `playlist-${nanoid(18)}`;
     const now = new Date();
     const createdAt = time.format(now, 'ddd, DD MMM YYYY HH:mm:ss');
@@ -71,9 +87,7 @@ export default class PlaylistsServices {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError(
-        'Gagal mendapatkan playlist. Id tidak ditemukan',
-      );
+      throw new NotFoundError('Gagal mendapatkan playlist. Id tidak ditemukan');
     }
 
     return result.rows[0];

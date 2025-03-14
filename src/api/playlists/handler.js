@@ -14,10 +14,10 @@ export default class PlaylistsHandler {
     const { name } = request.payload;
     const { id: credentialId } = request.auth.credentials;
 
-    const playlistId = await this._service.addPlaylist({
+    const playlistId = await this._service.addPlaylist(
       name,
-      owner: credentialId,
-    });
+      credentialId,
+    );
 
     const response = h.response({
       status: 'success',
@@ -45,23 +45,23 @@ export default class PlaylistsHandler {
   async getPlaylistByIdHandler(request) {
     const { id } = request.params;
     const playlist = await this._service.getPlaylistById(id);
-    
+
     return {
       status: 'success',
       data: {
-        playlist
-      }
-    }
+        playlist,
+      },
+    };
   }
 
   async deletePlaylistByIdHandler(request) {
     const { id } = request.params;
     const { id: credentialId } = request.auth.credentials;
-    
+
     await this._service.verifyPlaylistOwner(id, credentialId);
-    
+
     await this._service.deletePlaylistById(id);
-    
+
     return {
       status: 'success',
       message: 'Menghapus Playlist',

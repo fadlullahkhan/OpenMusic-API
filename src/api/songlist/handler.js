@@ -13,15 +13,13 @@ export default class SongListHandler {
   async postSongListHandler(request, h) {
     this._validator.validateSongListPayload(request.payload);
 
-    const { id: credentialId } = request.auth.credentials;
     const { id: playlistId } = request.params;
     const { songId } = request.payload;
-
-    await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
+    const { id: credentialId } = request.auth.credentials;
 
     await this._playlistsService.getPlaylistById(playlistId);
-    this._songsService.getSongById(songId);
-
+    await this._songsService.getSongById(songId);
+    await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
     await this._service.addSongList(playlistId, songId);
 
     const response = h.response({
@@ -54,19 +52,19 @@ export default class SongListHandler {
   }
 
   async deleteSongListHandler(request) {
-    this.validator.validateSongListPayload(request.payload);
+    this._validator.validateSongListPayload(request.payload);
 
-    const { id: credentialId } = request.auth.credentials;
     const { id: playlistId } = request.params;
     const { songId } = request.payload;
+    const { id: credentialId } = request.auth.credentials;
 
     await this._playlistsService.getPlaylistById(playlistId);
     await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
     await this._service.deleteSongList(playlistId, songId);
-    
+
     return {
       status: 'success',
-      message: 'Menghapus Lagu dari Playlist'
-    }
+      message: 'Menghapus Lagu dari Playlist',
+    };
   }
 }
