@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 export const up = (pgm) => {
   pgm.createTable('albums', {
     id: {
@@ -108,7 +109,7 @@ export const up = (pgm) => {
     },
   });
 
-  pgm.createTable('songlist', {
+  pgm.createTable('playlist_songs', {
     id: {
       type: 'VARCHAR(50)',
       primaryKey: true,
@@ -129,7 +130,7 @@ export const up = (pgm) => {
     },
   });
 
-  pgm.createTable('playlist_activity', {
+  pgm.createTable('playlist_song_activities', {
     id: {
       type: 'VARCHAR(50)',
       primaryKey: true,
@@ -180,14 +181,14 @@ export const up = (pgm) => {
   pgm.addConstraint(
     'collaborations',
     'unique_playlist_id_and_user_id',
-    'UNIQUE(playlist_id, user_id)',
+    'UNIQUE(playlist_id, user_id)'
   );
 };
 
 export const down = (pgm) => {
-  pgm.dropTable('songlist');
+  pgm.dropTable('playlist_songs');
   pgm.dropTable('collaborations');
-  pgm.dropTable('playlist_activity');
+  pgm.dropTable('playlist_song_activities');
   pgm.dropTable('playlists');
   pgm.dropTable('songs');
   pgm.dropTable('albums');

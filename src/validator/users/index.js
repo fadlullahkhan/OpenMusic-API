@@ -11,4 +11,4 @@ const UserValidator = {
   },
 };
 
-export default UserValidator
+export default UserValidator;

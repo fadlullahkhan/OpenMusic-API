@@ -29,12 +29,12 @@ export default class UsersHandler {
   async getUserByIdHandler(request) {
     const { id } = request.params;
     const user = await this._service.getUserById(id);
-    
+
     return {
       statue: 'success',
       data: {
         user,
-      }
-    }
+      },
+    };
   }
 }

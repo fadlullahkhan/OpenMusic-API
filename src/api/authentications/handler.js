@@ -16,7 +16,7 @@ export default class AuthenticationsHandler {
     const { username, password } = request.payload;
     const id = await this._usersService.verifyUserCredential(
       username,
-      password,
+      password
     );
 
     const accessToken = this._tokenManager.generateAccessToken({ id });
@@ -40,7 +40,7 @@ export default class AuthenticationsHandler {
     this._validator.validatePutAuthenticationPayload(request.payload);
 
     const { refreshToken } = request.payload;
-    
+
     await this._authenticationsService.verifyRefreshToken(refreshToken);
 
     const { id } = this._tokenManager.verifyRefreshToken(refreshToken);
