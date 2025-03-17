@@ -24,6 +24,12 @@ import AuthenticationsServices from './services/postgres/AuthenticationsServices
 import TokenManager from './tokenize/TokenManager.js';
 import AuthenticationsValidator from './validator/authentications/index.js';
 
+// playlists plugin
+import playlists from './api/playlists/index.js';
+import PlaylistsServices from './services/postgres/PlaylistsServices.js';
+import PlaylistSongsServices from './services/postgres/PlaylistSongsServices.js';
+import PlaylistValidator from './validator/playlists/index.js';
+
 import ClientError from './exceptions/ClientError.js';
 
 const init = async () => {
@@ -31,6 +37,8 @@ const init = async () => {
   const songsServices = new SongsServices();
   const usersServices = new UsersServices();
   const authenticationsServices = new AuthenticationsServices();
+  const playlistsServices = new PlaylistsServices();
+  const playlistSongsServices = new PlaylistSongsServices();
 
   const server = Hapi.server({
     port: process.env.PORT,
@@ -93,6 +101,15 @@ const init = async () => {
         usersService: usersServices,
         tokenManager: TokenManager,
         validator: AuthenticationsValidator,
+      },
+    },
+    {
+      plugin: playlists,
+      options: {
+        service: playlistsServices,
+        playlistSongsService: playlistSongsServices,
+        songsService: songsServices,
+        validator: PlaylistValidator,
       },
     },
   ]);

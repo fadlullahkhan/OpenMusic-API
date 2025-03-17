@@ -18,7 +18,7 @@ export default class PlaylistsServices {
     const createdAt = time.format(now, 'ddd, DD MMM YYYY HH:mm:ss');
 
     const query = {
-      text: 'INSERT INTO playlists VALUES($1, $2, $3, $4)',
+      text: 'INSERT INTO playlists VALUES($1, $2, $3, $4) RETURNING id',
       values: [id, name, createdAt, owner],
     };
 
@@ -42,7 +42,7 @@ export default class PlaylistsServices {
     return result.rows;
   }
 
-  async getPlaylistsById(id) {
+  async getPlaylistById(id) {
     const query = {
       text: 'SELECT playlists.id, playlists.name, users.username AS username FROM playlists JOIN users ON users.id = playlists.owner WHERE playlists.id = $1',
       values: [id],
