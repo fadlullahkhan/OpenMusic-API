@@ -1,5 +1,4 @@
 import autoBind from 'auto-bind';
-import ClientError from '../../exceptions/ClientError.js';
 
 export default class CollaborationsHandler {
   constructor(service, playlistsService, usersService, validator) {
@@ -16,11 +15,9 @@ export default class CollaborationsHandler {
 
     const { id: credentialId } = request.auth.credentials;
     const { playlistId, userId } = request.payload;
-    
     await this._usersService.getUserById(userId);
 
     await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
-    
     const collaborationId = await this._service.addCollaboration(
       playlistId,
       userId,

@@ -6,9 +6,9 @@ export default {
   version: '1.0.0',
   register: async (
     server,
-    { service, playlistSongsService, songsService, validator },
+    { service, playlistSongsService, activitiesService, songsService, validator },
   ) => {
-    const playlistsHandler = new PlaylistsHandler(service, playlistSongsService, songsService, validator);
+    const playlistsHandler = new PlaylistsHandler(service, playlistSongsService, activitiesService, songsService, validator);
 
     server.route(routes(playlistsHandler));
   },

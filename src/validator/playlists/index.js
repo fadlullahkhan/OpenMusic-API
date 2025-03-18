@@ -9,13 +9,13 @@ const PlaylistValidator = {
       throw new InvariantError(validationResult.error.message);
     }
   },
-  validatePlaylistSongsPayload: payload => {
+  validatePlaylistSongsPayload: (payload) => {
     const validationResult = PlaylistSongsPayloadSchema.validate(payload);
-    
+
     if (validationResult.error) {
       throw new InvariantError(validationResult.error.message);
     }
-  }
+  },
 };
 
 export default PlaylistValidator;

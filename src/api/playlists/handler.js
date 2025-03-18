@@ -1,9 +1,16 @@
 import autoBind from 'auto-bind';
 
 export default class PlaylistsHandler {
-  constructor(service, playlistSongService, songsService, validator) {
+  constructor(
+    service,
+    playlistSongService,
+    activitiesService,
+    songsService,
+    validator,
+  ) {
     this._service = service;
     this._playlistSongService = playlistSongService;
+    this._activitiesService = activitiesService;
     this._songsService = songsService;
     this._validator = validator;
 
@@ -86,11 +93,18 @@ export default class PlaylistsHandler {
     const { id: credentialId } = request.auth.credentials;
     const { songId } = request.payload;
 
-    await this._songsService.getSongById(songId);
-
     await this._service.verifyPlaylistAccess(playlistId, credentialId);
 
+    await this._songsService.getSongById(songId);
+
     await this._playlistSongService.addSongIntoPlaylist(playlistId, songId);
+
+    await this._activitiesService.addPlaylistActivity(
+      playlistId,
+      songId,
+      credentialId,
+      'add',
+    );
 
     const response = h.response({
       status: 'success',
@@ -121,7 +135,6 @@ export default class PlaylistsHandler {
       },
     });
     response.code(200);
-    console.log(response.source.message);
     return response;
   }
 
@@ -136,9 +149,38 @@ export default class PlaylistsHandler {
 
     await this._playlistSongService.deleteSongInPlaylist(playlistId, songId);
 
+    await this._activitiesService.addPlaylistActivity(
+      playlistId,
+      songId,
+      credentialId,
+      'delete',
+    );
+
     const response = h.response({
       status: 'success',
       message: 'Menghapus Lagu dari Playlist',
+    });
+    response.code(200);
+    return response;
+  }
+
+  async getPlaylistActivities(request, h) {
+    const { id: playlistId } = request.params;
+    const { id: credentialId } = request.auth.credentials;
+
+    await this._service.verifyPlaylistAccess(playlistId, credentialId);
+
+    await this._service.getPlaylistById(playlistId);
+
+    const activities =
+      await this._activitiesService.getPlaylistActivities(playlistId);
+
+    const response = h.response({
+      status: 'success',
+      data: {
+        playlistId,
+        activities: activities,
+      },
     });
     response.code(200);
     return response;

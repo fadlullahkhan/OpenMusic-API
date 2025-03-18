@@ -43,9 +43,9 @@ export default class CollaborationsServices {
       text: 'SELECT * FROM collaborations WHERE playlist_id = $1 AND user_id = $2',
       values: [playlistId, userId],
     };
-    
+
     const result = await this._pool.query(query);
-    
+
     if (!result.rows.length) {
       throw new InvariantError('Kolaborator tidak terverifikasi');
     }

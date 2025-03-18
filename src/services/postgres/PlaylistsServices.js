@@ -95,11 +95,14 @@ export default class PlaylistsServices {
       await this.verifyPlaylistOwner(playlistId, userId);
     } catch (error) {
       if (error instanceof NotFoundError) {
-        throw error
+        throw error;
       }
       try {
-        await this._collaborationService.verifyCollaboration(playlistId, userId);
-      } catch (e) {
+        await this._collaborationService.verifyCollaboration(
+          playlistId,
+          userId,
+        );
+      } catch {
         throw error;
       }
     }
