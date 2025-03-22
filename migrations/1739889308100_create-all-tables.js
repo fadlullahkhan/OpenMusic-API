@@ -21,6 +21,9 @@ export const up = (pgm) => {
       type: 'TEXT',
       notNull: true,
     },
+    cover_url: {
+      type: 'TEXT',
+    },
   });
 
   pgm.createTable('songs', {
@@ -178,10 +181,35 @@ export const up = (pgm) => {
     },
   });
 
+  pgm.createTable('user_album_likes', {
+    id: {
+      type: 'VARCHAR(50)',
+      primaryKey: true,
+    },
+    album_id: {
+      type: 'VARCHAR(50)',
+      notNull: true,
+      references: 'albums(id)',
+      onDelete: 'CASCADE',
+    },
+    user_id: {
+      type: 'VARCHAR(50)',
+      notNull: true,
+      references: 'users(id)',
+      onDelete: 'CASCADE',
+    },
+  });
+
   pgm.addConstraint(
     'collaborations',
     'unique_playlist_id_and_user_id',
     'UNIQUE(playlist_id, user_id)',
+  );
+  
+  pgm.addConstraint(
+    'user_album_likes',
+    'unique_album_id_and_user_id',
+    'UNIQUE(album_id, user_id)',
   );
 };
 
