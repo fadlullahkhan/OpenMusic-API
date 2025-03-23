@@ -19,7 +19,7 @@ export default class AlbumsServices {
     const updatedAt = createdAt;
 
     const query = {
-      text: 'INSERT INTO albums VALUES($1, $2, $3, $4,$5) RETURNING id',
+      text: 'INSERT INTO albums VALUES($1, $2, $3, $4, $5) RETURNING id',
       values: [id, name, year, createdAt, updatedAt],
     };
 
@@ -42,7 +42,7 @@ export default class AlbumsServices {
     const query = {
       text: `
         SELECT 
-          a.id AS album_id, a.name AS album_name, a.year AS album_year,
+          a.id AS album_id, a.name AS album_name, a.year AS album_year, a.cover_url AS album_cover,
           s.id AS song_id, s.title AS song_title, 
           s.performer AS song_performer
         FROM albums a
@@ -62,6 +62,7 @@ export default class AlbumsServices {
       id: result.rows[0].album_id,
       name: result.rows[0].album_name,
       year: result.rows[0].album_year,
+      coverUrl: result.rows[0].album_cover,
       songs: result.rows
         .filter((row) => row.song_id)
         .map((row) => ({
@@ -99,6 +100,19 @@ export default class AlbumsServices {
 
     if (!result.rows.length) {
       throw new NotFoundError('Gagal menghapus catatan. Id tidak ditemukan');
+    }
+  }
+
+  async setAlbumCover(albumId, fileLocation) {
+    const query = {
+      text: 'UPDATE albums SET cover_url = $1 WHERE id = $2 RETURNING id',
+      values: [fileLocation, albumId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new InvariantError('Gagal mengganti Cover Album');
     }
   }
 }

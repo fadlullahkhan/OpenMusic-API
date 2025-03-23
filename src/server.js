@@ -2,6 +2,7 @@ import 'dotenv/config';
 
 import Hapi from '@hapi/hapi';
 import Jwt from '@hapi/jwt';
+import inert from '@hapi/inert';
 import { fileURLToPath } from 'url';
 import path, { dirname } from 'path';
 
@@ -63,7 +64,7 @@ const init = async () => {
   const playlistSongsServices = new PlaylistSongsServices();
   const activitiesServices = new ActivitiesServices();
   const storageServices = new StorageServices(
-    path.resolve(__dirname, 'api/uploads/file/images'),
+    path.resolve(__dirname, 'images/cover')
   );
 
   const server = Hapi.server({
@@ -79,6 +80,9 @@ const init = async () => {
   await server.register([
     {
       plugin: Jwt,
+    },
+    {
+      plugin: inert,
     },
   ]);
 
@@ -160,6 +164,7 @@ const init = async () => {
       plugin: uploads,
       options: {
         service: storageServices,
+        albumsService: albumsServices,
         validator: UploadsValidator,
       },
     },
