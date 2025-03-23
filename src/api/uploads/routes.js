@@ -4,8 +4,6 @@ import path, { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-console.log(__dirname);
-
 const routes = (handler) => [
   {
     method: 'POST',
